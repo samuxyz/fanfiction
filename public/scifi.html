@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="File-fic app">
+    <meta name="author" content="Sam Zaza">
+    <meta name="mail" content="zaza.samuele@gmail.com">
+    
+    <link rel="icon" href="../../favicon.ico">
+    
+    <!-- CSS -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="./css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
+    
+    <title>File-fiction</title>    
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix header-filestack">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="nav-filestack"><a href="./index.html">Home</a></li>
+            <li role="presentation" class="active active-filestack"><a id="button-filestack" href="./upload.html">Upload <i class="glyphicon glyphicon-upload"></i></a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">File-Fiction</h3>
+      </div>
+      <div class="jumbotron">
+        <img id="sci-fi" src="http://5.darkroom.shortlist.com/980/e2bd17397c28155558243fffc1e07b46:ab06bfe4f7c5797f2c99b81becdbc6c7/the-rings-of-saturn"/>
+        <h2>Sci-fi</h2>
+        <p class="lead"><i>'Hard science fiction' is stories that feature authentic scientific knowledge and depend upon it for plot development and plot resolution.</i> - Isaac Asimov
+        </p>
+      </div>
+      <div class="row marketing">
+      <ul class="js-item-list"></ul>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2016 File-fiction, Inc.</p>
+    </footer>
+    </div>
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script>
+    function appendData(data) {
+      data.forEach(function(fanfic, index){
+        var fanficElement =
+        '<li class="news-item">' +
+          '<p><a class="news-link" href="' + filestackTransform(fanfic.url) + '">' + fanfic.title +'</a> - <em>Posted by:</em> <a href="#">' + fanfic.author + '</a></p>' +
+          '<ul class="news-meta">' +
+            '<li class="news-meta-item">' +
+              'words: ' + fanfic.words +
+            '</li>' +
+            '<li class="news-meta-item">' +
+              'Reviews: ' + fanfic.reviews +
+            '</li>' +
+            '<li class="news-meta-item">' +
+              'Updated: ' + fanfic.published +
+            '</li>' +
+            '<li class="news-meta-item">' +
+              'Published: Feb ' + fanfic.updated
+            '</li>' +
+          '</ul>' +
+        '</li>'
+        $(".js-item-list").append(fanficElement);
+      });
+    }
+
+    //Filestack api to transform the document to .pdf
+    function filestackTransform(url) {
+      return "https://process.filestackapi.com/YOUR_API_KEY/output=format:pdf/" + url;
+    }
+
+    $(document).ready(function(){
+      $.ajax(
+        {
+          url: "http://localhost:3000/fanfiction",
+          method: "GET",
+          dataType: "json"
+        }
+      )
+      .done(appendData)
+      .fail(function(e){ console.log("ERROR: " + e)});
+    });
+    </script>
+  </body>
+</html>

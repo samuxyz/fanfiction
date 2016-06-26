@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="File-fic app">
+    <meta name="author" content="Sam Zaza">
+    <meta name="mail" content="zaza.samuele@gmail.com">
+    
+    <link rel="icon" href="../../favicon.ico">
+    
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="./css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
+
+    <title>File-fiction</title>    
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix header-filestack">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="nav-filestack"><a href="./index.html">Home</a></li>
+            <li role="presentation" class="active active-filestack"><a id="button-filestack" href="./upload.html">Upload <i class="glyphicon glyphicon-upload"></i></a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">File-Fiction</h3>
+      </div>
+
+
+<div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title text-center">
+          <span class="glyphicon glyphicon-file"></span> File-fiction form 
+        </h2>
+      </div>
+      <div class="panel-body">
+        <form name="document-form" novalidate>
+          <div class="form-group">
+          <label for="title">Title</label>
+          <input id="title" type="text" value="" class="form-control" placeholder="Enter the title..."/>
+          </div>
+          <div class="form-group">
+          <label for="author">Author</label>
+          <input id="author" type="text" value="" class="form-control" placeholder="Enter the author.."/>
+          </div>
+          <div class="form-group">
+          <label for="genre">Genre</label>
+          <input id="genre" type="text" value="" class="form-control" placeholder="Enter the genre.."/>
+          </div>
+          <div class="form-group ">
+          <label for="picture">File</label>
+          <div class="text-center dropup">
+            <button type="button" class="btn btn-default filepicker">
+              Upload <span class="caret"></span>
+            </button>
+             
+          </div>
+        </div>
+          <button class="btn btn-primary btn-block submit">Submit</button>
+        </form>
+      </div>
+</div>
+      <footer class="footer">
+        <p>&copy; 2016 File-fiction, Inc.</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+  <script src="https://api.filestackapi.com/filestack.js"></script>
+  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+  <script>
+      
+</script>
+  <script>
+    
+    
+    filepicker.setKey("YOUR_API_KEY");
+
+    function notify(data) {
+      toastr.info('If all three of these are referenced correctly, then this should toast should pop-up.');
+    }
+
+    $(document).ready(function(){
+      $('.filepicker').on('click', function(event){
+        var _this = $(this);       
+        filepicker.pick(
+          {
+            extension: ['.pdf', '.doc', '.docx', '.ppt', '.txt'],
+            container: 'modal',
+            services: ['COMPUTER', 'GOOGLE_DRIVE', 'CLOUDDRIVE', 'URL', 'EVERNOTE'],
+            maxSize: 5 * 1024 * 1024,
+            openTo: 'COMPUTER' 
+          },
+          function(Blob){
+            console.log(JSON.stringify(Blob));
+            _this.data("doc-url", Blob.url);
+            $('[type="filepicker-preview"]').data('fp-ur', Blob.url);
+          },
+          function(FPError){
+            console.log(FPError.toString());
+          }
+        );
+      });
+
+      $('.submit').on('click', function(){
+        var fanFiction = {
+          title : $('#title').val(),
+          author : $('#author').val(),
+          genre : $('#genre').val(),
+          url : $('.filepicker').data('doc-url')
+        };
+       $.ajax(
+        {
+          url: "http://localhost:3000/fanfiction",
+          method: "POST",
+          data: fanFiction,
+          dataType: "json"
+        }
+      )
+      .done(function(data){
+        console.log(data);
+        alert("successfully added!");
+      })
+      .fail(function(e){ console.log("ERROR: " + e)});
+      });
+    });
+  </script>
+  </body>
+</html>
